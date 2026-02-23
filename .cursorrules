@@ -1,0 +1,20 @@
+# 🤖 Questerix Content Engine Rules
+
+You are a Python Expert specialising in AI Content Generation and Document Processing.
+
+## Architecture Guidelines
+- **LangChain/Gemini**: Use `google-generativeai` for LLM calls. Prefer structured outputs (JSON).
+- **Validation**: Use **Pydantic v2** for all data schemas.
+- **Asynchrony**: Use `asyncio` for all I/O bound operations (API calls, file reading).
+- **Error Handling**: Implement exponential backoff for AI API rate limits (Power-tool: `tenacity`).
+
+## Code Standards
+- **Typing**: Use strict Python type hints (`typing` module).
+- **Docstrings**: Google-style docstrings for all modules and functions.
+- **Tests**: Maintain 90%+ coverage using `pytest`.
+
+## Project Context
+This engine is the "Brain" of Questerix. It transforms raw educational materials (PDFs, Lesson Plans) into structured Questions and Skills.
+- **Domain**: High-level category (e.g., Mathematics).
+- **Skill**: Specific learning objective (e.g., Linear Equations).
+- **Question**: MCQ or Short Answer attached to a Skill.

@@ -1,0 +1,71 @@
+# Gitleaks Configuration
+# https://github.com/gitleaks/gitleaks
+# Prevents secrets from being committed to the repo.
+
+title = "Questerix Gitleaks Config"
+
+[extend]
+# Use the default gitleaks rules as a baseline
+useDefault = true
+
+# Allowlist specific patterns that are NOT secrets
+[allowlist]
+  description = "Global allowlist"
+  paths = [
+    '''node_modules''',
+    '''\.git/''',
+    '''\.venv''',
+    '''pubspec\.lock''',
+    '''package-lock\.json''',
+    '''\.dart_tool''',
+    '''build/''',
+    '''dist/''',
+
+    # Environment files (gitignored, but may exist locally)
+    '''\.secrets$''',
+    '''\.env$''',
+    '''\.env\.local$''',
+    '''\.env\.test$''',
+    '''\.env\.test\.local$''',
+    '''\.env\.production$''',
+    '''admin-panel/\.env''',
+    '''landing-pages/\.env''',
+    '''scripts/knowledge-base/\.env''',
+    '''\.flutter-defines\.tmp''',
+
+    # Example/template files (contain placeholder values)
+    '''\.env\.example''',
+    '''secrets\.example\.env''',
+    '''\.mcp_config\.example\.json''',
+
+    # Test fixtures that use fake keys
+    '''supabase/tests/''',
+    '''supabase/functions/_shared/.*\.test\.ts''',
+    '''admin-panel/tests/''',
+
+    # Gitleaks temp artifacts
+    '''full_diff\.txt''',
+    '''gitleaks-report\.json''',
+
+    # Session reports that document past incidents (references, not live secrets)
+    '''docs/reports/SESSION_REPORT_''',
+    '''docs/oracle/ADMIN_GUIDE\.md''',
+
+    # Replit config (uses Supabase anon key for dev, not a secret)
+    '''\.replit$''',
+  ]
+  regexTarget = "line"
+  regexes = [
+    # Example/placeholder values in documentation
+    '''your-supabase-url''',
+    '''your-anon-key''',
+    '''YOUR_.*_HERE''',
+    '''sk-[.]{3}''',
+    # Supabase local dev defaults (safe to commit)
+    '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZS1kZW1v''',
+    # Test user passwords in test fixtures
+    '''test-.*@example\.com''',
+    # Error message strings that contain placeholder values (not real secrets)
+    '''REDACTED''',
+    '''=REDACTED\b''',
+  ]

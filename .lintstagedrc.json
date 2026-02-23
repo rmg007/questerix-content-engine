@@ -1,0 +1,8 @@
+{
+  "admin-panel/**/*.{ts,tsx,js,jsx}": [
+    "npx eslint --fix --config ./admin-panel/.eslintrc.cjs",
+    "npx prettier --write"
+  ],
+  "student-app/**/*.dart": ["dart format"],
+  "*.{json,md,yml,yaml}": ["npx prettier --write"]
+}
