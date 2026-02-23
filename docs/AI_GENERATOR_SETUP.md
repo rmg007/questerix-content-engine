@@ -1,56 +1,48 @@
-# AI Curriculum Assistant - Deployment & Usage Guide
+# 📄 Document & AI Generator Setup
 
-## 1. Setup Instructions (One-Time)
+This guide explains how to configure the Content Engine for high-fidelity document parsing and AI generation.
 
-### A. Environment Configuration
-The AI Generator runs client-side but requires a secure API key for Google Gemini.
+## 🔑 1. Environment Configuration
 
-1.  Get an API Key from [Google AI Studio](https://aistudio.google.com/).
-2.  Open your local `.env` file in `admin-panel`.
-3.  Add the key:
-    ```env
-    VITE_GEMINI_API_KEY=AIzaSy...YourKeyHere
-    ```
-4.  Restart the dev server (`npm run dev`) to load the new variable.
+Create a `.env` file in the root of the `Questerix-content-engine` folder:
 
-### B. Verify Dependencies
-If you encounter build errors, ensure all packages are installed:
-```bash
-cd admin-panel
-npm install
+```env
+# Primary AI Provider
+AI_PROVIDER=gemini # Options: gemini, openai
+
+# API Keys
+GEMINI_API_KEY=your_key_here
+OPENAI_API_KEY=your_key_here # Optional fallback
+
+# Supabase (For direct database writes if needed)
+SUPABASE_URL=your_project_url
+SUPABASE_SERVICE_ROLE_KEY=your_key
 ```
-Specifically, we added: `pdfjs-dist`, `mammoth`, `@google/generative-ai`, `react-dropzone`.
 
----
+## 📝 2. AI Prompt Engineering
 
-## 2. Usage Workflow
+The engine uses "System Instructions" found in `src/utils/prompts.py`. You can customize the "Personality" of the question generator here.
 
-1.  **Navigate:** Go into the **Questions** tab. Click the new **✨ AI Generator** button (top right).
-2.  **Upload:** Drag & Drop your source PDF, Word Doc, or Text file.
-3.  **Configure:** 
-    *   **Select Skill:** Crucial! Choose the exact skill (e.g., "Integer Operations") so the CSV maps correctly.
-    *   **Count/Difficulty:** Set your preferences.
-4.  **Review Prompt:** 
-    *   The system creates a default prompt.
-    *   *Best Practice:* Add specific constraints like "No negative numbers" or "Use simple English".
-5.  **Generate & Download:**
-    *   Click "Generate". Wait ~10-20 seconds.
-    *   Review the preview table.
-    *   Click **Download CSV**.
+### Question Types Supported
 
----
+- `multiple_choice`: Single correct answer with distractors.
+- `mcq_multi`: Multiple correct answers.
+- `text_input`: Numerical or short text match.
+- `boolean`: True/False logic.
+- `reorder_steps`: Sequencing tasks.
 
-## 3. Importing Requests (The Final Step)
+## 📑 3. Document Parsing Details
 
-1.  Open the downloaded CSV in Excel/Numbers.
-2.  **Verify mapped columns:** Ensure `skill_title` matches exactly what is in your system.
-3.  **Check Options:** For Multiple Choice, ensure the JSON string looks correct (e.g., `["A", "B"]`).
-4.  **Upload to System:** Use the **Upload** button on the Questions page to bulk-insert these into the database. Ensure you select the correct domain/app context.
+The engine uses a tiered parsing strategy:
 
----
+1. **PDFs**: Uses `PyPDF2` (Standard) or `pdfplumber` (Legacy/Tables).
+2. **Word**: Uses `python-docx` to preserve document structure.
+3. **Images**: Uses `Pillow` for basic metadata, can be extended for OCR.
 
-## 4. Troubleshooting
+## 🧪 4. Local Testing Workflow
 
-*   **"Missing API Key" Warning:** Check your `.env` file and restart the server.
-*   **"PDF Parsing Failed":** Some PDFs are images only (scanned). These require OCR, which `pdfjs-dist` does not support. Use text-based PDFs.
-*   **"Generation Failed":** If the file is too large (>100 pages), split it or copy-paste relevant text into a `.txt` file.
+Before committing content to the production database:
+
+1. Run a sample file through the pipeline.
+2. Review the generated JSON for accuracy.
+3. Check the `token_count` metadata to monitor your AI costs.
